@@ -120,9 +120,39 @@ class SchemaTable extends Component {
     if (!product) {
       return null;
     }
-    let data = schemaTransformToTable(product);
-    data = _.isArray(data) ? data : [];
-    return <Table bordered size="small" pagination={false} dataSource={data} columns={columns} />;
+    if (!product.has_multiple_codes){
+      let data = schemaTransformToTable(product);
+      data = _.isArray(data) ? data : [];
+
+      return <Table bordered size="small" pagination={false} dataSource={data} columns={columns} />;
+    }
+
+    let codes = Object.keys(product.codes);
+    codes.forEach(curCode => {
+      if (!product.codes[curCode].schema) {
+        return;
+      }
+      product.codes[curCode].table = schemaTransformToTable(product.codes[curCode].schema);
+    });
+
+    let codeElements = codes.map(curCode => {
+      let description = product.codes[curCode].description && (<p>{product.codes[curCode].description}</p>);
+      let schema = product.codes[curCode].schema && (<Table bordered size="small" pagination={false} dataSource={product.codes[curCode].table} columns={columns} />);
+      return (
+        <div key={curCode}>
+          <h3>{curCode}</h3>
+          {description}
+          {schema}
+        </div>
+      );
+    })
+
+    return (
+      <div>
+        {codeElements}
+      </div>
+    );
+
   }
 }
 export default SchemaTable;

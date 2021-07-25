@@ -296,24 +296,33 @@ const compareVersions = require('compare-versions');
       return res_body;
     }
     let codes = Object.keys(api);
-    let curCode;
+    
     if (codes.length > 0) {
-      if (codes.indexOf('200') > -1) {
-        curCode = '200';
-      } else curCode = codes[0];
-
-      let res = api[curCode];
-      if (res && typeof res === 'object') {
-        if (res.schema) {
-          res_body = JSON.stringify(res.schema, null, 2);
-        } else if (res.description) {
-          res_body = res.description;
+      let resp_codes = {};
+      codes.forEach(curCode => {
+        let resp = api[curCode];
+        let res_resp = '';
+        if (resp && typeof resp === 'object') {
+          if (resp.schema) {
+            res_resp = resp;
+          } else if (resp.description) {
+            res_resp = { description: resp.description };
+          }
+        } else if (typeof resp === 'string') {
+          res_resp = { description: resp.description };
+        } else {
+          res_resp = '';
         }
-      } else if (typeof res === 'string') {
-        res_body = res;
-      } else {
-        res_body = '';
+        resp_codes[curCode] = res_resp;
+      })
+
+      let res = {
+        has_multiple_codes: true,
+        codes: resp_codes
       }
+
+      res_body = JSON.stringify(res, null, 2);
+
     } else {
       res_body = '';
     }
