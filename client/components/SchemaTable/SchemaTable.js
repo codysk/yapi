@@ -64,6 +64,15 @@ const columns = [
     }
   },
   {
+    title: '示例',
+    dataIndex: 'example',
+    key: 'example',
+    width: 80,
+    render: text => {
+      return <div>{_.isBoolean(text) ? text + '' : text}</div>;
+    }
+  },
+  {
     title: '备注',
     dataIndex: 'desc',
     key: 'desc',

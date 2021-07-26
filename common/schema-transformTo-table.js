@@ -4,6 +4,7 @@ let fieldNum = 1;
 exports.schemaTransformToTable = schema => {
   try {
     schema = checkJsonSchema(schema);
+    console.log(schema)
     let result = Schema(schema, 0);
     result = _.isArray(result) ? result : [result];
     return result;
@@ -89,6 +90,7 @@ const SchemaObject = (data, key) => {
       name,
       key: key + '-' + index,
       desc: copiedState.description,
+      example: copiedState.example,
       required: required.indexOf(name) != -1
     };
 
