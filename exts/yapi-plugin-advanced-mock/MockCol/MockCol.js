@@ -55,7 +55,15 @@ export default class MockCol extends Component {
           schema: json5_parse(this.props.currInterface.res_body),
           required: true
         });
-        record.res_body = JSON.stringify(result.data);
+        if (result.data.has_multiple_codes) {
+          if (result.data.codes['200']){
+            record.res_body = JSON.stringify(result.data.codes['200'].schema)
+          } else {
+            record.res_body = '""'
+          }
+        } else {
+          record.res_body = JSON.stringify(result.data);
+        }
       }
       // 参数过滤schema形式
       if (this.props.currInterface.req_body_is_json_schema) {
